@@ -1,5 +1,6 @@
+import 'package:expense_tracker/expense_add.dart';
 import 'package:expense_tracker/expense_item.dart';
-import 'package:expense_tracker/model/dummy.dart';
+import 'package:expense_tracker/model/expense_data.dart';
 import 'package:flutter/material.dart';
 
 class ExpenseScreen extends StatefulWidget {
@@ -10,8 +11,18 @@ class ExpenseScreen extends StatefulWidget {
 }
 
 class _ExpenseScreenState extends State<ExpenseScreen> {
+  final List<ExpenseData> expenseData = [];
+
   void bottomSheet() {
-    showModalBottomSheet(context: context, builder: (ctx) => Container());
+    showModalBottomSheet(
+        context: context,
+        builder: (ctx) => ExpenseAddBtmSheet(
+              expeseSubmit: (expense) {
+                setState(() {
+                  expenseData.add(expense);
+                });
+              },
+            ));
   }
 
   @override
@@ -32,9 +43,9 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
             ),
             Expanded(
               child: ListView.builder(
-                  itemCount: expenseDummy.length,
+                  itemCount: expenseData.length,
                   itemBuilder: (ctx, idx) => Dismissible(
-                        key: ValueKey(expenseDummy[idx]),
+                        key: ValueKey(expenseData[idx]),
                         direction: DismissDirection.endToStart,
                         background: Card(
                           color: Colors.red,
@@ -46,10 +57,10 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                               )),
                         ),
                         onDismissed: (direction) {
-                          expenseDummy.removeAt(idx);
+                          expenseData.removeAt(idx);
                         },
                         child: ExpenseItem(
-                          expenseData: expenseDummy[idx],
+                          expenseData: expenseData[idx],
                         ),
                       )),
             )
