@@ -32,7 +32,7 @@ class _ExpenseItemState extends State<ExpenseItem> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '\$${widget.expenseData.amount.toStringAsFixed(2)}',
+                  '\Rp. ${widget.expenseData.amount.toStringAsFixed(2)}',
                   style: TextStyle(color: Colors.black),
                 ),
                 Container(
