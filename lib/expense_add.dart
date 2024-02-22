@@ -95,7 +95,7 @@ class _ExpenseAddBtmSheetState extends State<ExpenseAddBtmSheet> {
                   keyboardType: TextInputType.number,
                   controller: _amountController,
                   decoration: InputDecoration(
-                      label: Text('Amount'), prefix: Text('\$')),
+                      label: Text('Amount'), prefix: Text('\Rp. ')),
                 ),
               ),
               InkWell(
