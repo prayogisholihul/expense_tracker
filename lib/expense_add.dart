@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:expense_tracker/model/expense_data.dart';
 
 class ExpenseAddBtmSheet extends StatefulWidget {
-  ExpenseAddBtmSheet({Key, required this.expeseSubmit});
+  ExpenseAddBtmSheet({Key, required this.submitExpense});
 
-  final void Function(ExpenseData) expeseSubmit;
-
+  final void Function(ExpenseData) submitExpense;
   @override
   State<ExpenseAddBtmSheet> createState() => _ExpenseAddBtmSheetState();
 }
 
 class _ExpenseAddBtmSheetState extends State<ExpenseAddBtmSheet> {
+  var expenseData = [];
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   Category? _selectedCategory;
@@ -31,18 +31,18 @@ class _ExpenseAddBtmSheetState extends State<ExpenseAddBtmSheet> {
   }
 
   void submit() {
-    setState(() {
-      if (_titleController.text.trim().isNotEmpty ||
-          _amountController.text.trim().isNotEmpty ||
-          _selectedDate != null ||
-          _selectedCategory != null) {
-        final enteredAmount = double.tryParse(_amountController.text);
-        final data = ExpenseData(_titleController.text.trim(), enteredAmount!,
-            _selectedDate!, _selectedCategory!);
-        widget.expeseSubmit(data);
-        Navigator.pop(context);
-      }
-    });
+    if (_titleController.text.trim().isNotEmpty ||
+        _amountController.text.trim().isNotEmpty ||
+        _selectedDate != null ||
+        _selectedCategory != null) {
+      final data = ExpenseData(
+          title: _titleController.text.trim(),
+          amount: int.parse(_amountController.text),
+          date: _selectedDate!,
+          category: _selectedCategory!);
+      widget.submitExpense(data);
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -55,7 +55,7 @@ class _ExpenseAddBtmSheetState extends State<ExpenseAddBtmSheet> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
       child: Column(
         children: [
           TextField(

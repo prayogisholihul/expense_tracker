@@ -1,3 +1,4 @@
+import 'package:expense_tracker/database.dart';
 import 'package:expense_tracker/expense_add.dart';
 import 'package:expense_tracker/expense_item.dart';
 import 'package:expense_tracker/model/expense_data.dart';
@@ -11,18 +12,31 @@ class ExpenseScreen extends StatefulWidget {
 }
 
 class _ExpenseScreenState extends State<ExpenseScreen> {
-  final List<ExpenseData> expenseData = [];
+  final ExpenseDB database = ExpenseDB.instance;
+  List<ExpenseData> expenseData = [];
 
   void bottomSheet() {
     showModalBottomSheet(
         context: context,
         builder: (ctx) => ExpenseAddBtmSheet(
-              expeseSubmit: (expense) {
-                setState(() {
-                  expenseData.add(expense);
-                });
+              submitExpense: (expense) async {
+                await database.insert(expense);
+                initData();
               },
             ));
+  }
+
+  @override
+  void initState() {
+    initData();
+    super.initState();
+  }
+
+  void initData() async {
+    final data = await database.getAll();
+    setState(() {
+      expenseData = data;
+    });
   }
 
   @override
@@ -45,7 +59,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
               child: ListView.builder(
                   itemCount: expenseData.length,
                   itemBuilder: (ctx, idx) => Dismissible(
-                        key: ValueKey(expenseData[idx]),
+                        key: Key(expenseData[idx].id.toString()),
                         direction: DismissDirection.endToStart,
                         background: Card(
                           color: Colors.red,
@@ -57,7 +71,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                               )),
                         ),
                         onDismissed: (direction) {
-                          expenseData.removeAt(idx);
+                          database.delete(expenseData[idx].id!);
                         },
                         child: ExpenseItem(
                           expenseData: expenseData[idx],
