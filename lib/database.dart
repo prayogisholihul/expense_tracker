@@ -31,7 +31,8 @@ CREATE TABLE ${ExpenseDbType.tableName}(
   ${ExpenseDbType.title} ${ExpenseDbType.textType},
   ${ExpenseDbType.amount} ${ExpenseDbType.intType},
   ${ExpenseDbType.date} ${ExpenseDbType.textType},
-  ${ExpenseDbType.category} ${ExpenseDbType.textType}
+  ${ExpenseDbType.category} ${ExpenseDbType.textType},
+  ${ExpenseDbType.createdData} ${ExpenseDbType.intType}
 )
 ''');
   }
@@ -47,7 +48,7 @@ CREATE TABLE ${ExpenseDbType.tableName}(
 
   Future<List<ExpenseData>> getAll() async {
     final db = await instance.database;
-    final orderLatest = '${ExpenseDbType.date} ASC';
+    final orderLatest = '${ExpenseDbType.createdData} DESC';
     final data = await db.query(ExpenseDbType.tableName, orderBy: orderLatest);
     return data.map((item) => ExpenseData.fromMap(item)).toList();
   }
@@ -56,6 +57,14 @@ CREATE TABLE ${ExpenseDbType.tableName}(
     final db = await instance.database;
     return await db.delete(ExpenseDbType.tableName,
         where: '${ExpenseDbType.id} = ?', whereArgs: [id]);
+  }
+
+  Future<int> update(ExpenseData expense) async {
+    final db = await instance.database;
+    return await db.update(ExpenseDbType.tableName, expense.toMap(),
+        where: '${ExpenseDbType.id} = ?',
+        whereArgs: [expense.id],
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<void> close() async {

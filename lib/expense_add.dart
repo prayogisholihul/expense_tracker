@@ -2,9 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:expense_tracker/model/expense_data.dart';
 
 class ExpenseAddBtmSheet extends StatefulWidget {
-  ExpenseAddBtmSheet({Key, required this.submitExpense});
+  ExpenseAddBtmSheet(
+      {Key,
+      this.expenseData,
+      required this.insertExpense,
+      required this.updateExpense});
 
-  final void Function(ExpenseData) submitExpense;
+  final void Function(ExpenseData) insertExpense;
+  final ExpenseData? expenseData;
+  final void Function(ExpenseData) updateExpense;
+
   @override
   State<ExpenseAddBtmSheet> createState() => _ExpenseAddBtmSheetState();
 }
@@ -36,13 +43,32 @@ class _ExpenseAddBtmSheetState extends State<ExpenseAddBtmSheet> {
         _selectedDate != null ||
         _selectedCategory != null) {
       final data = ExpenseData(
+          id: widget.expenseData?.id,
           title: _titleController.text.trim(),
           amount: int.parse(_amountController.text),
           date: _selectedDate!,
           category: _selectedCategory!);
-      widget.submitExpense(data);
+
+      if (widget.expenseData?.id != null) {
+        widget.updateExpense(data);
+        Navigator.pop(context);
+        return;
+      }
+
+      widget.insertExpense(data);
       Navigator.pop(context);
     }
+  }
+
+  @override
+  void initState() {
+    if (widget.expenseData != null) {
+      _titleController.text = widget.expenseData!.title;
+      _amountController.text = widget.expenseData!.amount.toString();
+      _selectedDate = widget.expenseData!.date;
+      _selectedCategory = widget.expenseData!.category;
+    }
+    super.initState();
   }
 
   @override

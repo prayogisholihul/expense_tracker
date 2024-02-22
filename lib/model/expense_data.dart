@@ -14,13 +14,15 @@ class ExpenseData {
       required this.title,
       required this.amount,
       required this.date,
-      required this.category});
+      required this.category})
+      : createdData = DateTime.now().millisecondsSinceEpoch;
 
   final int? id;
   final String title;
   final int amount;
   final DateTime date;
   final Category category;
+  final int createdData;
 
   String get formattedDate {
     return formatter.format(date);
@@ -32,6 +34,7 @@ class ExpenseData {
         ExpenseDbType.title: title,
         ExpenseDbType.date: formattedDate,
         ExpenseDbType.category: category.toString(),
+        ExpenseDbType.createdData: createdData
       };
 
   factory ExpenseData.fromMap(Map<String, dynamic> item) => ExpenseData(
@@ -75,4 +78,5 @@ class ExpenseDbType {
   static const String amount = 'number';
   static const String category = 'category';
   static const String date = 'date';
+  static const String createdData = 'created_date';
 }

@@ -15,12 +15,17 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
   final ExpenseDB database = ExpenseDB.instance;
   List<ExpenseData> expenseData = [];
 
-  void bottomSheet() {
+  void bottomSheet(ExpenseData? expense) {
     showModalBottomSheet(
         context: context,
         builder: (ctx) => ExpenseAddBtmSheet(
-              submitExpense: (expense) async {
+              expenseData: expense,
+              insertExpense: (expense) async {
                 await database.insert(expense);
+                initData();
+              },
+              updateExpense: (expense) async {
+                await database.update(expense);
                 initData();
               },
             ));
@@ -47,7 +52,13 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
           'Expense Tracker',
           style: Theme.of(context).textTheme.titleLarge,
         ),
-        actions: [IconButton(onPressed: bottomSheet, icon: Icon(Icons.add))],
+        actions: [
+          IconButton(
+              onPressed: () {
+                bottomSheet(null);
+              },
+              icon: Icon(Icons.add))
+        ],
       ),
       body: Container(
         child: Column(
@@ -73,8 +84,13 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                         onDismissed: (direction) {
                           database.delete(expenseData[idx].id!);
                         },
-                        child: ExpenseItem(
-                          expenseData: expenseData[idx],
+                        child: InkWell(
+                          onTap: () {
+                            bottomSheet(expenseData[idx]);
+                          },
+                          child: ExpenseItem(
+                            expenseData: expenseData[idx],
+                          ),
                         ),
                       )),
             )
